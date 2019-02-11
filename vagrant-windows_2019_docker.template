@@ -1,0 +1,13 @@
+Vagrant.require_version ">= 1.6.2"
+
+Vagrant.configure("2") do |config|
+    config.vm.box = "windows_2019_docker"
+
+    config.vm.guest = :windows
+    config.vm.provider "hyperv" do |v|
+        v.cpus = 2
+        v.memory = 4096
+        v.maxmemory = 4096
+        v.linked_clone = true
+    end
+end

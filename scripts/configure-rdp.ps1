@@ -1,0 +1,2 @@
+Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name fDenyTSConnections -Value 0 -Force -ErrorAction Stop  
+Set-NetFirewallRule -DisplayGroup "Remote Desktop" -Enabled:True -ErrorAction Stop

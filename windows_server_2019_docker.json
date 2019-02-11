@@ -1,0 +1,74 @@
+{
+  "variables": {
+    "autounattend": "./AnswerFiles/Autounattend.xml",
+    "disk_size": "61440",
+    "headless": "false",
+    "iso_checksum_type": "sha256",
+    "winrm_timeout": "6h",
+    "hyperv_switchname": "External"
+  },
+  "builders": [
+    {
+      "vm_name": "WindowsServer2019Docker",
+      "type": "hyperv-iso",
+      "communicator": "winrm",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "0s",
+      "winrm_password": "manager",
+      "winrm_username": "manager",
+      "winrm_use_ntlm": "true",
+      "winrm_insecure": true,
+      "winrm_timeout": "{{user `winrm_timeout`}}",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "disk_size": "{{user `disk_size`}}",
+      "enable_dynamic_memory": false,
+      "enable_mac_spoofing": true,
+      "enable_secure_boot": true,
+      "enable_virtualization_extensions": true,
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/init.bat",
+        "./scripts/enable-winrm.ps1"
+      ],
+      "guest_additions_mode": "disable",
+      "ram_size": 4096,
+      "switch_name": "{{user `hyperv_switchname`}}"
+    }],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/configure-updates.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/configure-rdp.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/configure-shutdown.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/configure-docker.ps1"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "windows_server_2019_docker_{{.Provider}}.box",
+      "vagrantfile_template": "vagrant-windows_2019_core.template"
+    }
+  ]
+}
