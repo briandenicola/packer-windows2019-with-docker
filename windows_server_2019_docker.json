@@ -31,7 +31,8 @@
       "floppy_files": [
         "{{user `autounattend`}}",
         "./scripts/init.bat",
-        "./scripts/enable-winrm.ps1"
+        "./scripts/enable-winrm.ps1",
+        "./scripts/install-hotfix.ps1"
       ],
       "guest_additions_mode": "disable",
       "ram_size": 4096,
@@ -42,6 +43,12 @@
       "type": "powershell",
       "scripts": [
         "./scripts/configure-updates.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/configure-sshd.ps1"
       ]
     },
     {
@@ -68,7 +75,7 @@
       "type": "vagrant",
       "keep_input_artifact": false,
       "output": "windows_server_2019_docker_{{.Provider}}.box",
-      "vagrantfile_template": "vagrant-windows_2019_core.template"
+      "vagrantfile_template": "vagrant-windows_2019_docker.template"
     }
   ]
 }
