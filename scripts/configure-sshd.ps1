@@ -1,10 +1,22 @@
-$publickey = ""
+param(
+    [string] $publickey
+)
+
+if( [string]::IsNullorEmpty($publicKey) ) {
+    $publicKey = $ENV:PUBKEY
+}
+
 $sshRoot = Join-Path -Path $ENV:USERPROFILE -ChildPath ".ssh"
 $authorizedFile = Join-Path -Path $sshRoot -ChildPath "authorized_keys"
-$ssh_config = "C:\ProgramData\ssh\sshd_config"
 
 New-Item -Path $sshRoot -ItemType Directory
 Out-File -FilePath $authorizedFile -Encoding ascii -InputObject $publickey
+
+$ssh_regKey = "HKLM:\SOFTWARE\OpenSSH"
+$ssh_config = "C:\ProgramData\ssh\sshd_config"
+$pwsh_path  = Get-Command -Name Powershell | Select -ExpandProperty Source
+
+New-ItemProperty -Path $ssh_regKey -Name DefaultShell -Value $pwsh_path -PropertyType String -Force 
 
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0

@@ -5,7 +5,8 @@
     "headless": "false",
     "iso_checksum_type": "sha256",
     "winrm_timeout": "6h",
-    "hyperv_switchname": "External"
+    "hyperv_switchname": "External",
+    "public_key": "{{env `PUBKEY`}}"
   },
   "builders": [
     {
@@ -47,6 +48,7 @@
     },
     {
       "type": "powershell",
+      "environment_vars": "PUBKEY={{user `public_key`}}",
       "scripts": [
         "./scripts/configure-sshd.ps1"
       ]
