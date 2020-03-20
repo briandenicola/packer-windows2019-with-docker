@@ -14,9 +14,6 @@ Out-File -FilePath $authorizedFile -Encoding ascii -InputObject $publickey
 
 $ssh_regKey = "HKLM:\SOFTWARE\OpenSSH"
 $ssh_config = "C:\ProgramData\ssh\sshd_config"
-$pwsh_path  = Get-Command -Name Powershell | Select-Object -ExpandProperty Source
-
-New-ItemProperty -Path $ssh_regKey -Name DefaultShell -Value $pwsh_path -PropertyType String -Force 
 
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
@@ -35,3 +32,6 @@ $sshd = $sshd.Replace("Match Group administrators", "#Match Group administrators
 $sshd = $sshd.Replace("       AuthorizedKeysFile __PROGRAMDATA__/ssh/administrators_authorized_keys","#       AuthorizedKeysFile __PROGRAMDATA__/ssh/administrators_authorized_keys")
 $sshd | Out-File -Encoding ascii -FilePath $ssh_config
 Restart-Service sshd
+
+$pwsh_path  = Get-Command -Name Powershell | Select-Object -ExpandProperty Source
+New-ItemProperty -Path $ssh_regKey -Name DefaultShell -Value $pwsh_path -PropertyType String -Force 
